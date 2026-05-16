@@ -18,7 +18,7 @@
 
 # =========================================================
 
-!pip install yfinance pandas numpy openpyxl -q
+
 
 import yfinance as yf
 
