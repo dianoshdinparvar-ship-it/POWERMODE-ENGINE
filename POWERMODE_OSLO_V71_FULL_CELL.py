@@ -529,7 +529,7 @@ if not live.empty:
 print("\n============================================================")
 print("🔥 POWERMODE OSLO v7.1 — FULL ALPHA TEST REGIME")
 print("============================================================")
-display(summary)
+print(summary.to_string())
 
 print("\n============================================================")
 print("🔥 LIVE MODEL")
