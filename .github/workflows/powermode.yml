@@ -1,0 +1,53 @@
+name: POWERMODE Auto Scan
+
+on:
+
+  schedule:
+
+    - cron: "0 8 * * *"   # 10:00 Norge sommertid
+
+    - cron: "0 15 * * *"  # 17:00 Norge sommertid
+
+  workflow_dispatch:
+
+jobs:
+
+  run-powermode:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repo
+
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+
+        uses: actions/setup-python@v5
+
+        with:
+
+          python-version: "3.11"
+
+      - name: Install packages
+
+        run: |
+
+          pip install yfinance pandas numpy openpyxl pandas_ta
+
+      - name: Run V7 Oslo
+
+        run: python POWERMODE_OSLO_V71_FULL_CELL.py
+
+      - name: Run V4.2 Oslo
+
+        run: python POWERMODE_V42_FULL_CELL.py
+
+      - name: Run Sweden V8.1
+
+        run: python POWERMODE_SVERIGE_V81_KORRIGERT.py
+
+      - name: Run Master
+
+        run: python POWERMODE_MASTER_CELL.py
