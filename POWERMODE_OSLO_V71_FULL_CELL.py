@@ -4,7 +4,7 @@
 # Stores: V7_LIVE for MASTER
 # ============================================================
 
-!pip install yfinance pandas numpy openpyxl -q
+
 
 import yfinance as yf
 import pandas as pd
