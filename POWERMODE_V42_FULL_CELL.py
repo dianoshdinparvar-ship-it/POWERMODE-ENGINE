@@ -31,7 +31,7 @@ from datetime import date
 import warnings
 
 warnings.filterwarnings("ignore")
-
+display = print
 # =========================================================
 
 # SETTINGS
