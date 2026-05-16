@@ -64,7 +64,7 @@ jobs:
 
       - name: Run Sverige V8.1
 
-        run: python POWERMODE_SVERIGE_V81_KORRIGERT.py
+        run: POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py
 
       - name: Run Master
 
