@@ -1,3 +1,4 @@
+
 name: POWERMODE Auto Scan
 
 on:
@@ -84,4 +85,4 @@ jobs:
 
           -d chat_id="6375369326" \
 
-          -d text="POWERMODE feilet ❌ Åpne GitHub Actions og sjekk feilmelding."
+          -d text="POWERMODE feilet ❌ Åpne GitHub
