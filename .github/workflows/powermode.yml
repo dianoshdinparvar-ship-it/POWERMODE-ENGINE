@@ -5,9 +5,9 @@ on:
 
   schedule:
 
-    - cron: "0 8 * * *"   # 10:00 Norge sommertid
+    - cron: "0 8 * * *"
 
-    - cron: "0 15 * * *"  # 17:00 Norge sommertid
+    - cron: "0 15 * * *"
 
   workflow_dispatch:
 
@@ -21,13 +21,7 @@ jobs:
 
       - name: Send start message
 
-        run: |
-
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE starter scan 🚀"
+        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE starter scan 🚀"
 
       - name: Checkout repo
 
@@ -67,22 +61,10 @@ jobs:
 
         if: success()
 
-        run: |
-
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE ferdig ✅ Sjekk GitHub Actions for resultat."
+        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE ferdig ✅"
 
       - name: Send failed message
 
         if: failure()
 
-        run: |
-
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE feilet ❌ Åpne GitHub
+        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE feilet ❌ Åpne GitHub Actions og sjekk feilmelding."
