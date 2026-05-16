@@ -5,7 +5,7 @@
 # Stores: SE_SCAN, SE_BT for MASTER
 # ============================================================
 
-!p
+
 
 import yfinance as yf
 import pandas as pd
