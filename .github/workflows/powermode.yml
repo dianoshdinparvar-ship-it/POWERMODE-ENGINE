@@ -18,10 +18,6 @@ jobs:
 
     steps:
 
-      - name: Send start message
-
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE starter scan 🚀"
-
       - name: Checkout repo
 
         uses: actions/checkout@v4
@@ -38,7 +34,25 @@ jobs:
 
         run: |
 
-          pip install yfinance pandas numpy openpyxl pandas_ta ta
+          pip install yfinance pandas numpy openpyxl ta requests
+
+      - name: Telegram start
+
+        run: |
+
+          python - <<'PY'
+
+          import requests
+
+          requests.post(
+
+              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
+
+              data={"chat_id": "6375369326", "text": "POWERMODE starter scan 🚀"}
+
+          )
+
+          PY
 
       - name: Run Oslo V7.1
 
@@ -56,14 +70,42 @@ jobs:
 
         run: python POWERMODE_MASTER_CELL.py
 
-      - name: Send finished message
+      - name: Telegram success
 
         if: success()
 
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE ferdig ✅"
+        run: |
 
-      - name: Send failed message
+          python - <<'PY'
+
+          import requests
+
+          requests.post(
+
+              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
+
+              data={"chat_id": "6375369326", "text": "POWERMODE ferdig ✅"}
+
+          )
+
+          PY
+
+      - name: Telegram failure
 
         if: failure()
 
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" --data-urlencode "chat_id=6375369326" --data-urlencode "text=POWERMODE feilet ❌ Åpne GitHub Actions og sjekk feilmelding."
+        run: |
+
+          python - <<'PY'
+
+          import requests
+
+          requests.post(
+
+              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
+
+              data={"chat_id": "6375369326", "text": "POWERMODE feilet ❌ Sjekk GitHub Actions."}
+
+          )
+
+          PY
