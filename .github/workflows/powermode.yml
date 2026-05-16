@@ -32,9 +32,9 @@ jobs:
 
       - name: Install packages
 
-        run: |
+        run: |pip install yfinance pandas numpy openpyxl pandas-ta
 
-          pip install yfinance pandas numpy openpyxl ta requests
+          
 
       - name: Telegram start
 
