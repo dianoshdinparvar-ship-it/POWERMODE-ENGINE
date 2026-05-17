@@ -40,27 +40,27 @@ jobs:
 
       - name: Telegram start
 
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE starter scan 🚀"
+        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE starter scan"
 
       - name: Run Oslo V7.1
 
-        run: python POWERMODE_OSLO_V71_FULL_CELL.py
+        run: python POWERMODE_OSLO_V71_FULL_CELL.py | tee oslo_v71.log
 
       - name: Run Oslo V4.2
 
-        run: python POWERMODE_V42_FULL_CELL.py
+        run: python POWERMODE_V42_FULL_CELL.py | tee oslo_v42.log
 
       - name: Run Sverige V8.1
 
-        run: python POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py
+        run: python POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py | tee sverige_v81.log
 
-       # Master deaktivert – bruker Colab-minne
+      # Master deaktivert – bruker Colab-minne
 
       # - name: Run Master
 
       #   run: python POWERMODE_MASTER_CELL.py
 
-            - name: Telegram success
+      - name: Telegram success
 
         if: success()
 
@@ -70,19 +70,27 @@ jobs:
 
           import requests
 
-          import subprocess
+          def read_tail(file, lines=35):
 
-          result = subprocess.check_output(
+              try:
 
-              ["tail","-40","$GITHUB_STEP_SUMMARY"],
+                  with open(file, "r", encoding="utf-8", errors="ignore") as f:
 
-              text=True,
+                      return "\n".join(f.read().splitlines()[-lines:])
 
-              shell=True
+              except Exception:
 
-          )
+                  return ""
 
-          msg = "✅ POWERMODE ferdig\n\n" + result[:3500]
+          msg = "POWERMODE ferdig ✅\n\n"
+
+          msg += "OSLO V7.1\n"
+
+          msg += read_tail("oslo_v71.log", 35)
+
+          msg += "\n\nSVERIGE V8.1\n"
+
+          msg += read_tail("sverige_v81.log", 25)
 
           requests.post(
 
@@ -90,12 +98,18 @@ jobs:
 
               data={
 
-                  "chat_id":"6375369326",
+                  "chat_id": "6375369326",
 
-                  "text":msg
+                  "text": msg[:3900]
 
               }
 
           )
 
           PY
+
+      - name: Telegram failure
+
+        if: failure()
+
+        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE feilet. Sjekk GitHub Actions."
