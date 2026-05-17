@@ -30,33 +30,23 @@ jobs:
 
           python-version: "3.11"
 
-      - name: Install packages
-
-        run: pip install yfinance pandas numpy openpyxl pandas-ta requests
-
       - name: Telegram start
 
         run: |
 
-          python - <<'PY'
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
 
-          import requests
+          -d chat_id="6375369326" \
 
-          requests.post(
+          -d text="POWERMODE starter scan 🚀"
 
-              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
+      - name: Install packages
 
-              data={
+        run: |
 
-                  "chat_id": "6375369326",
+          python -m pip install --upgrade pip
 
-                  "text": "POWERMODE starter scan 🚀"
-
-              }
-
-          )
-
-          PY
+          pip install yfinance pandas numpy openpyxl requests
 
       - name: Run Oslo V7.1
 
@@ -80,25 +70,11 @@ jobs:
 
         run: |
 
-          python - <<'PY'
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
 
-          import requests
+          -d chat_id="6375369326" \
 
-          requests.post(
-
-              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
-
-              data={
-
-                  "chat_id": "6375369326",
-
-                  "text": "POWERMODE ferdig ✅"
-
-              }
-
-          )
-
-          PY
+          -d text="POWERMODE ferdig ✅"
 
       - name: Telegram failure
 
@@ -106,22 +82,8 @@ jobs:
 
         run: |
 
-          python - <<'PY'
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
 
-          import requests
+          -d chat_id="6375369326" \
 
-          requests.post(
-
-              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
-
-              data={
-
-                  "chat_id": "6375369326",
-
-                  "text": "POWERMODE feilet ❌ Sjekk GitHub Actions."
-
-              }
-
-          )
-
-          PY
+          -d text="POWERMODE feilet ❌ Sjekk GitHub Actions."
