@@ -32,7 +32,7 @@ jobs:
 
       - name: Install packages
 
-        run: |pip install yfinance pandas numpy openpyxl pandas-ta
+        run: pip install yfinance pandas numpy openpyxl pandas-ta
 
           
 
