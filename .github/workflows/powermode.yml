@@ -34,11 +34,7 @@ jobs:
 
         run: |
 
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE starter scan 🚀"
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE starter scan"
 
       - name: Install packages
 
@@ -46,7 +42,7 @@ jobs:
 
           python -m pip install --upgrade pip
 
-          pip install yfinance pandas numpy openpyxl requests
+          pip install yfinance pandas numpy openpyxl requests pandas-ta
 
       - name: Run Oslo V7.1
 
@@ -70,11 +66,7 @@ jobs:
 
         run: |
 
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE ferdig ✅"
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE ferdig"
 
       - name: Telegram failure
 
@@ -82,8 +74,4 @@ jobs:
 
         run: |
 
-          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" \
-
-          -d chat_id="6375369326" \
-
-          -d text="POWERMODE feilet ❌ Sjekk GitHub Actions."
+          curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE feilet. Sjekk GitHub Actions."
