@@ -60,14 +60,42 @@ jobs:
 
       #   run: python POWERMODE_MASTER_CELL.py
 
-      - name: Telegram success
+            - name: Telegram success
 
         if: success()
 
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE ferdig ✅"
+        run: |
 
-      - name: Telegram failure
+          python - <<'PY'
 
-        if: failure()
+          import requests
 
-        run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE feilet ❌ Sjekk GitHub Actions."
+          import subprocess
+
+          result = subprocess.check_output(
+
+              ["tail","-40","$GITHUB_STEP_SUMMARY"],
+
+              text=True,
+
+              shell=True
+
+          )
+
+          msg = "✅ POWERMODE ferdig\n\n" + result[:3500]
+
+          requests.post(
+
+              "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
+
+              data={
+
+                  "chat_id":"6375369326",
+
+                  "text":msg
+
+              }
+
+          )
+
+          PY
