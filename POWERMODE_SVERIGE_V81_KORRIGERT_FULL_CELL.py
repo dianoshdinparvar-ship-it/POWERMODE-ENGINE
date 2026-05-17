@@ -10,7 +10,7 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import pandas_ta as ta
+# import pandas_ta as ta
 from datetime import datetime
 display = print
 # -----------------------------
