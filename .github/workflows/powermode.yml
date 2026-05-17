@@ -1,4 +1,4 @@
-name: POWERMODE Auto Scan 
+name: POWERMODE Auto Scan
 
 on:
 
@@ -32,9 +32,7 @@ jobs:
 
       - name: Install packages
 
-      run: pip install yfinance pandas numpy openpyxl pandas-ta requests
-
-          
+        run: pip install yfinance pandas numpy openpyxl pandas-ta requests
 
       - name: Telegram start
 
@@ -48,7 +46,13 @@ jobs:
 
               "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
 
-              data={"chat_id": "6375369326", "text": "POWERMODE starter scan 🚀"}
+              data={
+
+                  "chat_id": "6375369326",
+
+                  "text": "POWERMODE starter scan 🚀"
+
+              }
 
           )
 
@@ -64,7 +68,7 @@ jobs:
 
       - name: Run Sverige V8.1
 
-        run:  python POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py
+        run: python POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py
 
       - name: Run Master
 
@@ -84,7 +88,13 @@ jobs:
 
               "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
 
-              data={"chat_id": "6375369326", "text": "POWERMODE ferdig ✅"}
+              data={
+
+                  "chat_id": "6375369326",
+
+                  "text": "POWERMODE ferdig ✅"
+
+              }
 
           )
 
@@ -104,9 +114,14 @@ jobs:
 
               "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage",
 
-              data={"chat_id": "6375369326", "text": "POWERMODE feilet ❌ Sjekk GitHub Actions."}
+              data={
+
+                  "chat_id": "6375369326",
+
+                  "text": "POWERMODE feilet ❌ Sjekk GitHub Actions."
+
+              }
 
           )
 
           PY
-
