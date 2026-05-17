@@ -54,9 +54,11 @@ jobs:
 
         run: python POWERMODE_SVERIGE_V81_KORRIGERT_FULL_CELL.py
 
-      - name: Run Master
+       # Master deaktivert – bruker Colab-minne
 
-        run: python POWERMODE_MASTER_CELL.py
+      # - name: Run Master
+
+      #   run: python POWERMODE_MASTER_CELL.py
 
       - name: Telegram success
 
