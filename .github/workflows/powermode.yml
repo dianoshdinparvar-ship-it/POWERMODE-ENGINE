@@ -38,8 +38,6 @@ jobs:
 
           pip install yfinance pandas numpy openpyxl requests
 
-          pip install git+https://github.com/twopirllc/pandas-ta.git
-
       - name: Telegram start
 
         run: curl -s -X POST "https://api.telegram.org/bot8682008294:AAG2ssNDJKPy3dYEkoqg5EHKWz2quyNdcZ0/sendMessage" -d "chat_id=6375369326" -d "text=POWERMODE starter scan"
