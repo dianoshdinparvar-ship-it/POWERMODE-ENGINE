@@ -629,7 +629,9 @@ with pd.ExcelWriter(filename, engine="openpyxl") as writer:
 
 SE_SCAN = scan.copy()
 SE_BT = bt.copy()
+print("\n🔥 SVERIGE TOP SIGNALS")
 
+print(scan[display_cols].head(15).to_string(index=False))
 print("\n✅ Saved:", filename)
 print("✅ SE_SCAN stored:", SE_SCAN.shape)
 print("✅ SE_BT stored:", SE_BT.shape)
