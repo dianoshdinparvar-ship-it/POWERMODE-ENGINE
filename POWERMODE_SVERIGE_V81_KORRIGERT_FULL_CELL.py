@@ -314,29 +314,57 @@ def add_indicators(df):
     return df.replace([np.inf, -np.inf], np.nan).dropna()
 
 def add_weekly(df):
+
     if df.empty:
+
         return pd.DataFrame()
 
     w = df.resample("W").agg({
+
         "Open": "first",
+
         "High": "max",
+
         "Low": "min",
+
         "Close": "last",
+
         "Volume": "sum"
+
     }).dropna()
 
     if w.empty or len(w) < 40:
+
         return pd.DataFrame()
 
-    w["W_EMA10"] = ta.ema(w["Close"], length=10)
-    w["W_EMA30"] = ta.ema(w["Close"], length=30)
-    w["W_RSI"] = ta.rsi(w["Close"], length=14)
+    w["W_EMA10"] = w["Close"].ewm(span=10, adjust=False).mean()
 
-    wm = ta.macd(w["Close"])
-    if wm is None or wm.empty or wm.shape[1] < 2:
-        return pd.DataFrame()
+    w["W_EMA30"] = w["Close"].ewm(span=30, adjust=False).mean()
 
-    w["W_MACD_Hist"] = wm.iloc[:, 1]
+    delta = w["Close"].diff()
+
+    gain = delta.clip(lower=0)
+
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.rolling(14).mean()
+
+    avg_loss = loss.rolling(14).mean()
+
+    rs = avg_gain / avg_loss
+
+    w["W_RSI"] = 100 - (100 / (1 + rs))
+
+    ema12 = w["Close"].ewm(span=12, adjust=False).mean()
+
+    ema26 = w["Close"].ewm(span=26, adjust=False).mean()
+
+    macd_line = ema12 - ema26
+
+    signal_line = macd_line.ewm(span=9, adjust=False).mean()
+
+    w["W_MACD_Hist"] = macd_line - signal_line
+
     w["W_MACD_Accel"] = w["W_MACD_Hist"] - w["W_MACD_Hist"].shift(1)
 
     return w.replace([np.inf, -np.inf], np.nan).dropna()
