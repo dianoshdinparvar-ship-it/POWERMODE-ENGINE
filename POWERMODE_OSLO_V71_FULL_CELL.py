@@ -1030,17 +1030,9 @@ print(summary.to_string(index=False))
 
 print("\n============================================================")
 
-print("🔥 LIVE MODEL")
+print("\n🔥 OSLO TOP LIVE SIGNALS")
 
-print("============================================================")
-
-if live.empty:
-
-    print("No live signals.")
-
-else:
-
-    print(live.to_string(index=False))
+print(V7_LIVE.head(15).to_string(index=False))
 
 # print("\n============================================================")
 
