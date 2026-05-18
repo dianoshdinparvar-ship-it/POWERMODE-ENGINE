@@ -1028,11 +1028,15 @@ print("============================================================")
 
 print(summary.to_string(index=False))
 
-print("\n============================================================")
-
 print("\n🔥 OSLO TOP LIVE SIGNALS")
 
-print(V7_LIVE.head(10).to_string(index=False))
+if live.empty:
+
+    print("No Oslo live signals.")
+
+else:
+
+    print(live.head(10).to_string(index=False))
 
 # print("\n============================================================")
 
