@@ -54,20 +54,230 @@ def clean_ohlcv(df):
         return pd.DataFrame()
     df = df[needed].replace([np.inf, -np.inf], np.nan).dropna()
     return df
-
 def add_indicators(df):
+
     df = clean_ohlcv(df)
 
     if df.empty or len(df) < 220:
+
         return pd.DataFrame()
 
-    df["EMA10"] = ta.ema(df["Close"], length=10)
-    df["EMA20"] = ta.ema(df["Close"], length=20)
-    df["EMA50"] = ta.ema(df["Close"], length=50)
-    df["EMA200"] = ta.ema(df["Close"], length=200)
-    df["KAMA"] = ta.kama(df["Close"], length=10)
+    # EMA
 
-    macd = ta.macd(df["Close"])
+    df["EMA10"] = df["Close"].ewm(span=10, adjust=False).mean()
+
+    df["EMA20"] = df["Close"].ewm(span=20, adjust=False).mean()
+
+    df["EMA50"] = df["Close"].ewm(span=50, adjust=False).mean()
+
+    df["EMA200"] = df["Close"].ewm(span=200, adjust=False).mean()
+
+    # KAMA fallback
+
+    df["KAMA"] = df["Close"].ewm(span=10, adjust=False).mean()
+
+    # MACD
+
+    ema12 = df["Close"].ewm(span=12, adjust=False).mean()
+
+    ema26 = df["Close"].ewm(span=26, adjust=False).mean()
+
+    df["MACD"] = ema12 - ema26
+
+    df["MACD_Signal"] = df["MACD"].ewm(span=9, adjust=False).mean()
+
+    df["MACD_Hist"] = df["MACD"] - df["MACD_Signal"]
+
+    df["MACD_Accel"] = (
+
+        df["MACD_Hist"]
+
+        - df["MACD_Hist"].shift(1)
+
+    )
+
+    df["MACD_Accel_3D"] = (
+
+        df["MACD_Hist"]
+
+        - df["MACD_Hist"].shift(3)
+
+    )
+
+    # RSI
+
+    delta = df["Close"].diff()
+
+    gain = delta.clip(lower=0)
+
+    loss = -delta.clip(upper=0)
+
+    avg_gain = gain.rolling(14).mean()
+
+    avg_loss = loss.rolling(14).mean()
+
+    rs = avg_gain / avg_loss
+
+    df["RSI"] = 100 - (
+
+        100 / (1 + rs)
+
+    )
+
+    # ATR
+
+    prev_close = df["Close"].shift()
+
+    tr = pd.concat([
+
+        df["High"]-df["Low"],
+
+        (df["High"]-prev_close).abs(),
+
+        (df["Low"]-prev_close).abs()
+
+    ], axis=1).max(axis=1)
+
+    df["ATR"] = tr.rolling(14).mean()
+
+    # DMI / ADX
+
+    up = df["High"].diff()
+
+    down = -df["Low"].diff()
+
+    plus_dm = np.where(
+
+        (up > down) & (up > 0),
+
+        up,
+
+        0
+
+    )
+
+    minus_dm = np.where(
+
+        (down > up) & (down > 0),
+
+        down,
+
+        0
+
+    )
+
+    atr = df["ATR"]
+
+    df["+DI"] = (
+
+        pd.Series(
+
+            plus_dm,
+
+            index=df.index
+
+        ).rolling(14).mean()
+
+        / atr
+
+    ) * 100
+
+    df["-DI"] = (
+
+        pd.Series(
+
+            minus_dm,
+
+            index=df.index
+
+        ).rolling(14).mean()
+
+        / atr
+
+    ) * 100
+
+    spread = (
+
+        df["+DI"] - df["-DI"]
+
+    )
+
+    df["DMI_Accel"] = (
+
+        spread - spread.shift()
+
+    )
+
+    dx = (
+
+        spread.abs()
+
+        /
+
+        (df["+DI"]+df["-DI"])
+
+    ) * 100
+
+    df["ADX"] = dx.rolling(14).mean()
+
+    df["ATR_%"] = (
+
+        df["ATR"]
+
+        / df["Close"]
+
+    ) * 100
+
+    df["Vol_MA20"] = (
+
+        df["Volume"]
+
+        .rolling(20)
+
+        .mean()
+
+    )
+
+    df["Volume_Ratio"] = (
+
+        df["Volume"]
+
+        / df["Vol_MA20"]
+
+    )
+
+    df["KAMA_Dist_%"] = (
+
+        (df["Close"]-df["KAMA"])
+
+        / df["KAMA"]
+
+    ) * 100
+
+    df["EMA20_Dist_%"] = (
+
+        (df["Close"]-df["EMA20"])
+
+        / df["EMA20"]
+
+    ) * 100
+
+    return (
+
+        df
+
+        .replace(
+
+            [np.inf,-np.inf],
+
+            np.nan
+
+        )
+
+        .dropna()
+
+    )
+
     if macd is None or macd.empty or macd.shape[1] < 3:
         return pd.DataFrame()
 
