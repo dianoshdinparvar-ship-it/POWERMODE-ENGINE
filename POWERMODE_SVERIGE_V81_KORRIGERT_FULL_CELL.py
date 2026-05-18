@@ -54,7 +54,7 @@ def clean_ohlcv(df):
         return pd.DataFrame()
     df = df[needed].replace([np.inf, -np.inf], np.nan).dropna()
     return df
-def def add_indicators(df):
+def add_indicators(df):
 
     df = clean_ohlcv(df)
 
