@@ -92,7 +92,7 @@ jobs:
 
           msg += "OSLO V7.1\n"
 
-          msg += read_tail("oslo_v71.log", 35)
+          msg += read_tail("oslo_v71.log", 80)
 
           msg += "\n\nSVERIGE V8.1\n"
 
