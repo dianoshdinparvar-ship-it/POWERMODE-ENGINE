@@ -54,7 +54,7 @@ def clean_ohlcv(df):
         return pd.DataFrame()
     df = df[needed].replace([np.inf, -np.inf], np.nan).dropna()
     return df
-def add_indicators(df):
+def def add_indicators(df):
 
     df = clean_ohlcv(df)
 
@@ -62,31 +62,31 @@ def add_indicators(df):
 
         return pd.DataFrame()
 
-    # EMA
+    close = df["Close"]
 
-    df["EMA10"] = df["Close"].ewm(span=10, adjust=False).mean()
+    df["EMA10"] = close.ewm(span=10, adjust=False).mean()
 
-    df["EMA20"] = df["Close"].ewm(span=20, adjust=False).mean()
+    df["EMA20"] = close.ewm(span=20, adjust=False).mean()
 
-    df["EMA50"] = df["Close"].ewm(span=50, adjust=False).mean()
+    df["EMA50"] = close.ewm(span=50, adjust=False).mean()
 
-    df["EMA200"] = df["Close"].ewm(span=200, adjust=False).mean()
+    df["EMA200"] = close.ewm(span=200, adjust=False).mean()
 
-    # KAMA fallback
+    df["KAMA"] = close.ewm(span=10, adjust=False).mean()
 
-    df["KAMA"] = df["Close"].ewm(span=10, adjust=False).mean()
+    ema12 = close.ewm(span=12, adjust=False).mean()
 
-    # MACD
+    ema26 = close.ewm(span=26, adjust=False).mean()
 
-    ema12 = df["Close"].ewm(span=12, adjust=False).mean()
+    macd = ema12 - ema26
 
-    ema26 = df["Close"].ewm(span=26, adjust=False).mean()
+    signal = macd.ewm(span=9, adjust=False).mean()
 
-    df["MACD"] = ema12 - ema26
+    df["MACD"] = macd
 
-    df["MACD_Signal"] = df["MACD"].ewm(span=9, adjust=False).mean()
+    df["MACD_Hist"] = macd - signal
 
-    df["MACD_Hist"] = df["MACD"] - df["MACD_Signal"]
+    df["MACD_Signal"] = signal
 
     df["MACD_Accel"] = (
 
@@ -104,9 +104,7 @@ def add_indicators(df):
 
     )
 
-    # RSI
-
-    delta = df["Close"].diff()
+    delta = close.diff()
 
     gain = delta.clip(lower=0)
 
@@ -118,115 +116,87 @@ def add_indicators(df):
 
     rs = avg_gain / avg_loss
 
-    df["RSI"] = 100 - (
+    df["RSI"] = 100 - (100/(1+rs))
 
-        100 / (1 + rs)
+    plus_dm = df["High"].diff()
 
-    )
+    minus_dm = -df["Low"].diff()
 
-    # ATR
+    plus_dm[plus_dm < 0] = 0
 
-    prev_close = df["Close"].shift()
+    minus_dm[minus_dm < 0] = 0
 
-    tr = pd.concat([
+    tr1 = df["High"] - df["Low"]
 
-        df["High"]-df["Low"],
+    tr2 = abs(df["High"] - df["Close"].shift())
 
-        (df["High"]-prev_close).abs(),
+    tr3 = abs(df["Low"] - df["Close"].shift())
 
-        (df["Low"]-prev_close).abs()
+    tr = pd.concat(
 
-    ], axis=1).max(axis=1)
+        [tr1, tr2, tr3],
 
-    df["ATR"] = tr.rolling(14).mean()
+        axis=1
 
-    # DMI / ADX
+    ).max(axis=1)
 
-    up = df["High"].diff()
+    atr = tr.rolling(14).mean()
 
-    down = -df["Low"].diff()
+    plus_di = (
 
-    plus_dm = np.where(
+        100 *
 
-        (up > down) & (up > 0),
+        plus_dm.rolling(14).mean() /
 
-        up,
-
-        0
+        atr
 
     )
 
-    minus_dm = np.where(
+    minus_di = (
 
-        (down > up) & (down > 0),
+        100 *
 
-        down,
+        minus_dm.rolling(14).mean() /
 
-        0
-
-    )
-
-    atr = df["ATR"]
-
-    df["+DI"] = (
-
-        pd.Series(
-
-            plus_dm,
-
-            index=df.index
-
-        ).rolling(14).mean()
-
-        / atr
-
-    ) * 100
-
-    df["-DI"] = (
-
-        pd.Series(
-
-            minus_dm,
-
-            index=df.index
-
-        ).rolling(14).mean()
-
-        / atr
-
-    ) * 100
-
-    spread = (
-
-        df["+DI"] - df["-DI"]
-
-    )
-
-    df["DMI_Accel"] = (
-
-        spread - spread.shift()
+        atr
 
     )
 
     dx = (
 
-        spread.abs()
+        abs(plus_di-minus_di) /
 
-        /
+        (plus_di+minus_di)
 
-        (df["+DI"]+df["-DI"])
-
-    ) * 100
+    )*100
 
     df["ADX"] = dx.rolling(14).mean()
 
+    df["+DI"] = plus_di
+
+    df["-DI"] = minus_di
+
+    df["DI_Spread"] = (
+
+        df["+DI"]-df["-DI"]
+
+    )
+
+    df["DMI_Accel"] = (
+
+        df["DI_Spread"]
+
+        - df["DI_Spread"].shift(1)
+
+    )
+
+    df["ATR"] = atr
+
     df["ATR_%"] = (
 
-        df["ATR"]
+        atr/close*100
 
-        / df["Close"]
-
-    ) * 100
+    )
 
     df["Vol_MA20"] = (
 
@@ -242,76 +212,33 @@ def add_indicators(df):
 
         df["Volume"]
 
-        / df["Vol_MA20"]
+        /df["Vol_MA20"]
 
     )
 
     df["KAMA_Dist_%"] = (
 
-        (df["Close"]-df["KAMA"])
+        (close-df["KAMA"])
 
-        / df["KAMA"]
-
-    ) * 100
-
-    df["EMA20_Dist_%"] = (
-
-        (df["Close"]-df["EMA20"])
-
-        / df["EMA20"]
-
-    ) * 100
-
-    return (
-
-        df
-
-        .replace(
-
-            [np.inf,-np.inf],
-
-            np.nan
-
-        )
-
-        .dropna()
+        /df["KAMA"]*100
 
     )
 
-    if macd is None or macd.empty or macd.shape[1] < 3:
-        return pd.DataFrame()
+    df["EMA20_Dist_%"] = (
 
-    df["MACD"] = macd.iloc[:, 0]
-    df["MACD_Hist"] = macd.iloc[:, 1]
-    df["MACD_Signal"] = macd.iloc[:, 2]
-    df["MACD_Accel"] = df["MACD_Hist"] - df["MACD_Hist"].shift(1)
-    df["MACD_Accel_3D"] = df["MACD_Hist"] - df["MACD_Hist"].shift(3)
+        (close-df["EMA20"])
 
-    df["RSI"] = ta.rsi(df["Close"], length=14)
+        /df["EMA20"]*100
 
-    adx = ta.adx(df["High"], df["Low"], df["Close"], length=14)
-    if adx is None or adx.empty:
-        return pd.DataFrame()
+    )
 
-    if "ADX_14" not in adx.columns or "DMP_14" not in adx.columns or "DMN_14" not in adx.columns:
-        return pd.DataFrame()
+    return df.replace(
 
-    df["ADX"] = adx["ADX_14"]
-    df["+DI"] = adx["DMP_14"]
-    df["-DI"] = adx["DMN_14"]
-    df["DI_Spread"] = df["+DI"] - df["-DI"]
-    df["DMI_Accel"] = df["DI_Spread"] - df["DI_Spread"].shift(1)
+        [np.inf,-np.inf],
 
-    df["ATR"] = ta.atr(df["High"], df["Low"], df["Close"], length=14)
-    df["ATR_%"] = df["ATR"] / df["Close"] * 100
+        np.nan
 
-    df["Vol_MA20"] = df["Volume"].rolling(20).mean()
-    df["Volume_Ratio"] = df["Volume"] / df["Vol_MA20"]
-
-    df["KAMA_Dist_%"] = (df["Close"] - df["KAMA"]) / df["KAMA"] * 100
-    df["EMA20_Dist_%"] = (df["Close"] - df["EMA20"]) / df["EMA20"] * 100
-
-    return df.replace([np.inf, -np.inf], np.nan).dropna()
+    ).dropna()
 
 def add_weekly(df):
 
