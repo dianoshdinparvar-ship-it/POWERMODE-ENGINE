@@ -1032,7 +1032,7 @@ print("\n============================================================")
 
 print("\n🔥 OSLO TOP LIVE SIGNALS")
 
-print(V7_LIVE.head(15).to_string(index=False))
+print(V7_LIVE.head(10).to_string(index=False))
 
 # print("\n============================================================")
 
