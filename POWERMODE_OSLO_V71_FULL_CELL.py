@@ -1042,19 +1042,21 @@ else:
 
     print(live.to_string(index=False))
 
-print("\n============================================================")
+# print("\n============================================================")
 
-print("🔥 ELITE SIGNALS — BACKTEST SAMPLE")
+# print("🔥 ELITE SIGNALS — BACKTEST SAMPLE")
 
-print("============================================================")
+# print("============================================================")
 
-if elite.empty:
+#
 
-    print("No elite historical signals.")
+# if elite.empty:
 
-else:
+#     print("No elite historical signals.")
 
-    print(elite.head(30).to_string(index=False))
+# else:
+
+#     print(elite.head(30).to_string(index=False))
 
 # ============================================================
 
